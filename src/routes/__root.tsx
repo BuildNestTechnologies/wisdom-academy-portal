@@ -29,14 +29,22 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Wisdom Academy English School · Bhiwandi · Admissions 2026–27" },
+      {
+        name: "description",
+        content:
+          "Bilingual English-medium school in Bhiwandi since 2011. Smart classrooms, caring teachers, Islamic values. Admissions for 2026–27 are open.",
+      },
+      { name: "author", content: "Wisdom Academy English School" },
+      { property: "og:title", content: "Wisdom Academy English School · Bhiwandi" },
+      {
+        property: "og:description",
+        content:
+          "16+ years of quality bilingual education in Bhiwandi. Admissions for 2026–27 are open.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:site", content: "@wisdomacademy2011" },
     ],
     links: [
       {
