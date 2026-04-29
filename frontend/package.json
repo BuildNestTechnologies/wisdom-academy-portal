@@ -1,5 +1,6 @@
 {
   "name": "wisdom-academy-portal",
+  "version": "0.0.0",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -73,7 +74,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
@@ -83,6 +84,6 @@
     "prettier": "^3.8.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.1",
-    "vite": "^6.0.7"
+    "vite": "^8.0.10"
   }
 }
