@@ -121,13 +121,14 @@ export function Contact() {
               </div>
             </div>
             <div className="mt-5">
-              <label htmlFor="forClass" className="text-sm font-medium text-ink">Enquiring for</label>
+              <label htmlFor="forClass" className="text-sm font-medium text-ink" suppressHydrationWarning>Enquiring for</label>
               <select
                 id="forClass"
                 value={form.forClass}
                 onChange={(e) => setForm({ ...form, forClass: e.target.value })}
                 className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/30"
                 aria-invalid={!!errors.forClass}
+                suppressHydrationWarning
               >
                 <option value="">Select a class…</option>
                 {CLASSES.map((c) => (
