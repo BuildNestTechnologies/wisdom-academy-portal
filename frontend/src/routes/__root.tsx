@@ -1,6 +1,4 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-
-import appCss from "../styles.css?url";
+import { Outlet, Link, createRootRoute } from "@tanstack/react-router";
 
 function NotFoundComponent() {
   return (
@@ -25,58 +23,14 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Wisdom Academy English School · Bhiwandi · Admissions 2026–27" },
-      {
-        name: "description",
-        content:
-          "Bilingual English-medium school in Bhiwandi since 2011. Smart classrooms, caring teachers, Islamic values. Admissions for 2026–27 are open.",
-      },
-      { name: "author", content: "Wisdom Academy English School" },
-      { property: "og:title", content: "Wisdom Academy English School · Bhiwandi" },
-      {
-        property: "og:description",
-        content:
-          "16+ years of quality bilingual education in Bhiwandi. Admissions for 2026–27 are open.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@wisdomacademy2011" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      {
-        rel: "icon",
-        href: "/favicon.png",
-        type: "image/png",
-      },
-    ],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
 });
 
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+    </>
+  );
 }
