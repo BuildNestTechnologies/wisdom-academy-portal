@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 type Item = { src: string; alt: string };
@@ -26,38 +26,58 @@ export default function Lightbox({
   }, [index, items.length, onClose, onIndex]);
 
   const cur = items[index];
+
   return (
-    <AnimatePresence>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-2xl"
+      onClick={onClose}
+    >
+      {/* Container with layoutId */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[90] flex items-center justify-center bg-ink/85 p-4 backdrop-blur"
-        onClick={onClose}
-        role="dialog"
-        aria-modal="true"
-        aria-label={cur.alt}
+        layoutId={`gallery-item-${index}`}
+        className="relative max-h-[90vh] max-w-[95vw] overflow-hidden rounded-[2.5rem] bg-card shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
       >
-        <button aria-label="Close" className="absolute right-4 top-4 rounded-full bg-card/10 p-2 text-primary-foreground hover:bg-card/20" onClick={onClose}>
-          <X className="h-5 w-5" />
-        </button>
-        <button aria-label="Previous" className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-card/10 p-2 text-primary-foreground hover:bg-card/20" onClick={(e) => { e.stopPropagation(); onIndex((index - 1 + items.length) % items.length); }}>
-          <ChevronLeft className="h-6 w-6" />
-        </button>
-        <button aria-label="Next" className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-card/10 p-2 text-primary-foreground hover:bg-card/20" onClick={(e) => { e.stopPropagation(); onIndex((index + 1) % items.length); }}>
-          <ChevronRight className="h-6 w-6" />
-        </button>
         <motion.img
-          key={index}
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
+          layoutId={`gallery-img-${index}`}
           src={cur.src}
           alt={cur.alt}
-          onClick={(e) => e.stopPropagation()}
-          className="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-elegant"
+          className="h-auto max-h-[80vh] w-full object-contain"
         />
+        
+        <div className="p-6 bg-card">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-gold">Wisdom Gallery</p>
+              <h3 className="mt-1 font-display text-xl font-bold text-ink">{cur.alt}</h3>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                className="rounded-full bg-secondary p-3 text-ink transition-transform hover:scale-110 active:scale-95"
+                onClick={() => onIndex((index - 1 + items.length) % items.length)}
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button 
+                className="rounded-full bg-secondary p-3 text-ink transition-transform hover:scale-110 active:scale-95"
+                onClick={() => onIndex((index + 1) % items.length)}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button 
+          className="absolute right-6 top-6 rounded-full bg-white/20 p-2 text-white backdrop-blur-md transition-colors hover:bg-white/40"
+          onClick={onClose}
+        >
+          <X className="h-5 w-5" />
+        </button>
       </motion.div>
-    </AnimatePresence>
+    </motion.div>
   );
 }

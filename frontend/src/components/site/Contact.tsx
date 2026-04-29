@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
 import { z } from "zod";
 import { MapPin, Phone, Mail, Send } from "lucide-react";
 import { SCHOOL, whatsappLink } from "@/lib/constants";
@@ -22,6 +22,88 @@ const CLASSES = [
   "Just enquiring",
 ];
 
+function MagneticButton({ children, className, ...props }: any) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  const springX = useSpring(x, { stiffness: 150, damping: 15 });
+  const springY = useSpring(y, { stiffness: 150, damping: 15 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const { clientX, clientY } = e;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const centerX = left + width / 2;
+    const centerY = top + height / 2;
+    x.set((clientX - centerX) * 0.4);
+    y.set((clientY - centerY) * 0.4);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.button
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ x: springX, y: springY }}
+      className={className}
+      {...props}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+function FloatingInput({ id, label, value, onChange, error, type = "text", ...props }: any) {
+  const [isFocused, setIsFocused] = useState(false);
+  const hasValue = value.length > 0;
+
+  return (
+    <div className="relative group">
+      <motion.label
+        htmlFor={id}
+        initial={false}
+        animate={{
+          y: (isFocused || hasValue) ? -24 : 0,
+          scale: (isFocused || hasValue) ? 0.85 : 1,
+          color: isFocused ? "#D4AF37" : "#64748b",
+        }}
+        className="absolute left-4 top-3 z-10 pointer-events-none font-medium transition-colors"
+      >
+        {label}
+      </motion.label>
+      <motion.input
+        id={id}
+        type={type}
+        value={value}
+        onChange={onChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        animate={error ? { x: [-2, 2, -2, 2, 0] } : {}}
+        transition={{ duration: 0.4 }}
+        className={`w-full rounded-2xl border-2 bg-white px-4 py-3 text-sm outline-none transition-all ${
+          error ? "border-destructive/50" : "border-border focus:border-gold"
+        }`}
+        {...props}
+      />
+      {error && (
+        <motion.p 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-destructive"
+        >
+          {error}
+        </motion.p>
+      )}
+    </div>
+  );
+}
+
 export function Contact() {
   const [form, setForm] = useState({ name: "", phone: "", forClass: "", message: "" });
   const [errors, setErrors] = useState<Errors>({});
@@ -41,122 +123,119 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="bg-secondary/40 py-20 sm:py-28">
+    <section id="contact" className="relative py-24 sm:py-32 overflow-hidden bg-secondary/20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeader kicker="Get in touch" title={<>Visit, call, or message us.</>} />
+        <SectionHeader kicker="Start the Conversation" title="We're Here to Guide You" />
 
-        <div className="mt-14 grid gap-10 lg:grid-cols-12">
+        <div className="mt-20 grid gap-12 lg:grid-cols-12 items-start">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6 lg:col-span-5"
+            className="space-y-8 lg:col-span-5"
           >
-            <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
+            <div className="overflow-hidden rounded-[2.5rem] border-4 border-white bg-white shadow-elegant transform -rotate-1">
               <iframe
                 title="Wisdom Academy on Google Maps"
                 src={SCHOOL.mapsEmbed}
                 loading="lazy"
-                className="h-64 w-full border-0"
+                className="h-[300px] w-full border-0 transition-all duration-700"
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
 
-            <ul className="space-y-4 text-sm">
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-5 w-5 flex-none text-gold" />
-                <span className="text-foreground/90">{SCHOOL.fullAddress}</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 flex-none text-gold" />
-                <a href={`tel:${SCHOOL.phoneDigits}`} className="font-medium text-primary hover:underline">
-                  {SCHOOL.phone}
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 flex-none text-gold" />
-                <a href={`mailto:${SCHOOL.email}`} className="font-medium text-primary hover:underline">
-                  {SCHOOL.email}
-                </a>
-              </li>
-            </ul>
+            <div className="grid gap-6">
+              {[
+                { icon: MapPin, label: "Visit Us", value: SCHOOL.fullAddress },
+                { icon: Phone, label: "Call Us", value: SCHOOL.phone, href: `tel:${SCHOOL.phoneDigits}` },
+                { icon: Mail, label: "Email Us", value: SCHOOL.email, href: `mailto:${SCHOOL.email}` },
+              ].map((item, i) => (
+                <motion.div 
+                  key={item.label}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex items-center gap-4 p-4 rounded-3xl bg-white/50 backdrop-blur-sm border border-white/50"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
+                    <item.icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{item.label}</div>
+                    {item.href ? (
+                      <a href={item.href} className="text-base font-bold text-ink hover:text-gold transition-colors">{item.value}</a>
+                    ) : (
+                      <div className="text-base font-bold text-ink">{item.value}</div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
 
           <motion.form
             onSubmit={onSubmit}
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="rounded-3xl border border-border bg-card p-6 shadow-elegant sm:p-8 lg:col-span-7"
+            className="relative rounded-[3rem] border border-white bg-white/80 p-8 sm:p-12 shadow-2xl backdrop-blur-md lg:col-span-7"
             noValidate
           >
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="name" className="text-sm font-medium text-ink">Parent's name</label>
-                <input
-                  id="name"
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/30"
-                  placeholder="Your full name"
-                  aria-invalid={!!errors.name}
-                />
-                {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name}</p>}
-              </div>
-              <div>
-                <label htmlFor="phone" className="text-sm font-medium text-ink">Phone</label>
-                <input
-                  id="phone"
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/30"
-                  placeholder="+91 …"
-                  aria-invalid={!!errors.phone}
-                />
-                {errors.phone && <p className="mt-1 text-xs text-destructive">{errors.phone}</p>}
-              </div>
+            <div className="grid gap-8 sm:grid-cols-2">
+              <FloatingInput
+                id="name"
+                label="Parent Name"
+                value={form.name}
+                onChange={(e: any) => setForm({ ...form, name: e.target.value })}
+                error={errors.name}
+              />
+              <FloatingInput
+                id="phone"
+                label="Phone Number"
+                type="tel"
+                value={form.phone}
+                onChange={(e: any) => setForm({ ...form, phone: e.target.value })}
+                error={errors.phone}
+              />
             </div>
-            <div className="mt-5">
-              <label htmlFor="forClass" className="text-sm font-medium text-ink" suppressHydrationWarning>Enquiring for</label>
+            
+            <div className="mt-8">
+              <label htmlFor="forClass" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-4 mb-2 block">Admission For</label>
               <select
                 id="forClass"
                 value={form.forClass}
                 onChange={(e) => setForm({ ...form, forClass: e.target.value })}
-                className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/30"
-                aria-invalid={!!errors.forClass}
-                suppressHydrationWarning
+                className={`w-full rounded-2xl border-2 bg-white px-4 py-3 text-sm outline-none transition-all ${
+                  errors.forClass ? "border-destructive/50" : "border-border focus:border-gold"
+                }`}
               >
                 <option value="">Select a class…</option>
                 {CLASSES.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-              {errors.forClass && <p className="mt-1 text-xs text-destructive">{errors.forClass}</p>}
             </div>
-            <div className="mt-5">
-              <label htmlFor="message" className="text-sm font-medium text-ink">Message (optional)</label>
-              <textarea
+
+            <div className="mt-8">
+              <FloatingInput
                 id="message"
-                rows={4}
+                label="Your Message (Optional)"
                 value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/30"
-                placeholder="Anything we should know?"
+                onChange={(e: any) => setForm({ ...form, message: e.target.value })}
+                error={errors.message}
+                type="textarea"
               />
             </div>
-            <button
+
+            <MagneticButton
               type="submit"
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:-translate-y-0.5 sm:w-auto"
+              className="mt-10 group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-full bg-ink px-10 py-5 text-base font-bold text-white shadow-elegant transition-transform active:scale-95 sm:w-auto"
             >
-              <Send className="h-4 w-4" /> Send via WhatsApp
-            </button>
-            <p className="mt-3 text-xs text-muted-foreground">
-              Submitting opens WhatsApp with your enquiry pre-filled. We typically reply within an hour.
-            </p>
+              <span className="relative z-10 flex items-center gap-3">
+                Send via WhatsApp <Send className="h-5 w-5" />
+              </span>
+              <div className="absolute inset-0 -z-0 bg-gradient-to-r from-gold to-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            </MagneticButton>
           </motion.form>
         </div>
       </div>
