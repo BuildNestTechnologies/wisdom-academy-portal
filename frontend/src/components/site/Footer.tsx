@@ -1,4 +1,5 @@
-import { Instagram, Youtube, MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
+import { SiInstagram, SiYoutube, SiFacebook } from "react-icons/si";
 import { Logo } from "@/components/icons/Logo";
 import { NAV_LINKS, SCHOOL, whatsappLink } from "@/lib/constants";
 
@@ -79,10 +80,13 @@ export function Footer() {
             </ul>
             <div className="mt-5 flex items-center gap-3">
               <a href={SCHOOL.instagram} target="_blank" rel="noreferrer" aria-label="Instagram" className="rounded-full border border-primary-foreground/15 p-2.5 hover:bg-primary-foreground/10">
-                <Instagram className="h-4 w-4" />
+                <SiInstagram className="h-4 w-4" />
+              </a>
+              <a href={SCHOOL.facebook} target="_blank" rel="noreferrer" aria-label="Facebook" className="rounded-full border border-primary-foreground/15 p-2.5 hover:bg-primary-foreground/10">
+                <SiFacebook className="h-4 w-4" />
               </a>
               <a href={SCHOOL.youtube} target="_blank" rel="noreferrer" aria-label="YouTube" className="rounded-full border border-primary-foreground/15 p-2.5 hover:bg-primary-foreground/10">
-                <Youtube className="h-4 w-4" />
+                <SiYoutube className="h-4 w-4" />
               </a>
             </div>
           </div>

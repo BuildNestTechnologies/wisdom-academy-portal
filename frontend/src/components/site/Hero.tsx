@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, MessageCircle, Instagram, Youtube, MapPin, Sparkles } from "lucide-react";
+import { ArrowRight, MessageCircle, MapPin, Sparkles } from "lucide-react";
+import { SiInstagram, SiYoutube, SiFacebook } from "react-icons/si";
 import heroImg from "@/assets/hero-school.png";
 import { HERO, SCHOOL, whatsappLink } from "@/lib/constants";
 
@@ -99,7 +100,16 @@ export function Hero() {
               className="inline-flex items-center gap-1.5 transition hover:text-primary"
               aria-label="Instagram"
             >
-              <Instagram className="h-4 w-4 text-gold" /> {SCHOOL.followers} followers · {SCHOOL.posts} posts
+              <SiInstagram className="h-4 w-4 text-gold" /> {SCHOOL.followers} followers · {SCHOOL.posts} posts
+            </a>
+            <a
+              href={SCHOOL.facebook}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 transition hover:text-primary"
+              aria-label="Facebook"
+            >
+              <SiFacebook className="h-4 w-4 text-gold" /> Connect on Facebook
             </a>
             <a
               href={SCHOOL.youtube}
@@ -108,7 +118,7 @@ export function Hero() {
               className="inline-flex items-center gap-1.5 transition hover:text-primary"
               aria-label="YouTube"
             >
-              <Youtube className="h-4 w-4 text-gold" /> Watch on YouTube
+              <SiYoutube className="h-4 w-4 text-gold" /> Watch on YouTube
             </a>
           </div>
         </motion.div>

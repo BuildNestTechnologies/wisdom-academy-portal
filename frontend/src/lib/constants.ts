@@ -18,7 +18,9 @@ export const SCHOOL = {
   instagramHandle: "@wisdomacademy2011",
   followers: 236,
   posts: 142,
-  youtube: "https://youtube.com/@wisdomacademy2011",
+  youtube: "https://www.youtube.com/channel/UCwh_p-KNRU_s8gMwlMX9isQ",
+  facebook: "https://www.facebook.com/people/WA-ES/pfbid0B7tXpWsYrHAvb5Pey44fhoT5Bko8BWwTbNeXHyWwyD7CdwWKxQy5s7FWVno72ofMl/",
+  whatsapp: "https://wa.me/qr/NEA35CA7DSC5G1",
   mapsUrl: "https://maps.app.goo.gl/swK56bS5prbxPZUa8",
   mapsEmbed:
     "https://www.google.com/maps?q=Wisdom+Academy+English+School+Bhiwandi&output=embed",
@@ -227,7 +229,6 @@ export const NAV_LINKS = [
 ];
 
 export function whatsappLink(message?: string) {
-  const base = `https://wa.me/${SCHOOL.phoneDigits}`;
-  if (!message) return base;
-  return `${base}?text=${encodeURIComponent(message)}`;
+  if (!message) return SCHOOL.whatsapp;
+  return `https://wa.me/${SCHOOL.phoneDigits}?text=${encodeURIComponent(message)}`;
 }
